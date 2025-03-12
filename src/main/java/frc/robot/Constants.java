@@ -57,27 +57,14 @@ public final class Constants
     public static final int kDriverControllerPort = 0;
   public static final int kOperatorControllerPort = 1;
 
-  public static final int Joint1MotorID = 19; // CAN ID for Joint 1 motor   this one
-  public static final int Joint2MotorID = 24; 
-  public static final int cageMotorID = 20; // CAN ID for cage motor   
-  public static final int intakeMotorID2 = 21; // CAN ID for intake motor 2   
-  public static final int ballintakeID = 22;
+  public static final int BallMotorI = 5; // CAN ID for intake ball
+  public static final int BallMotorP = 6;  //CAN ID TO INTAKE BAL
+  public static final int CoralMotorL = 7; // CAN ID fOR CORAL OUTTAKE   
+  public static final int CoralMotorR = 8; // CAN ID FOR CORAL OUTAKE
+  public static final int LiftMotor = 9; // CAN ID FOR elevator lift
+  public static final int CSource = 3; // CAN ID FOR elevator lift
 
   }
-  public static class PIDConstants {
-    public static final double Joint1P = 0.01;
-    public static final double Joint1I = 0.0;
-    public static final double Joint1D = 0.0;
-
-    public static final double Joint2P = 0.1;
-    public static final double Joint2I = 0.0;
-    public static final double Joint2D = 0.0;
-}
-public static class FeedforwardConstants {
-  public static final double kS = 0.2; // Static gain
-  public static final double kG = 10.54; // Gravity gain
-  public static final double kV = 0.31; // Velocity gain
-  public static final double kA = 0.93; // Acceleration gain
-}
+ 
 
 }

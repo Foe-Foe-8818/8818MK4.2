@@ -5,8 +5,7 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import frc.robot.commands.JogJoint1Command;
-import frc.robot.subsystems.Joint1Subsystem;
+
 import edu.wpi.first.wpilibj.Servo;
 // import edu.wpi.first.cameraserver.CameraServer;
 
@@ -36,10 +35,16 @@ private Timer disabledTimer;
 private XboxController Driver;
 private XboxController Operater;
 
-private SparkMax cageMotor;
+//Motors that outtake the Coral//
+private SparkMax CoralMotorL;
+private SparkMax CoralMotorR;
 
-private SparkMax telescopicMotor;
-private SparkMax ballMotor;
+
+//Human source Intake//
+private SparkMax CSource;
+
+//Lift the Motor//
+private SparkMax LiftMotor;
 
 private final DoubleSolenoid Endsolenoid = new DoubleSolenoid(PneumaticsModuleType.REVPH, 7, 8);
 private final DoubleSolenoid clawsolenoid = new DoubleSolenoid(PneumaticsModuleType.REVPH, 6,9);
@@ -64,10 +69,12 @@ public Robot()
     Operater = new XboxController(Constants.OperatorConstants.kOperatorControllerPort);
 
 
-
-    cageMotor = new SparkMax(Constants.OperatorConstants.cageMotorID, MotorType.kBrushless);
-    telescopicMotor = new SparkMax(Constants.OperatorConstants.intakeMotorID2, MotorType.kBrushless);
-    ballMotor = new SparkMax(Constants.OperatorConstants.ballintakeID, MotorType.kBrushless);
+    CoralMotorL = new SparkMax(Constants.OperatorConstants.CoralMotorL, MotorType.kBrushless);
+    CoralMotorR = new SparkMax(Constants.OperatorConstants.CoralMotorR, MotorType.kBrushless);
+    //BallMotorI= new SparkMax(Constants.OperatorConstants.BallMotorI, MotorType.kBrushless);
+    //BallMotorP= new SparkMax(Constants.OperatorConstants.BallMotorP, MotorType.kBrushless);
+    CSource= new SparkMax(Constants.OperatorConstants.CSource, MotorType.kBrushless);
+    LiftMotor= new SparkMax(Constants.OperatorConstants.LiftMotor, MotorType.kBrushed);
 
   }
 
@@ -183,84 +190,129 @@ public Robot()
   @Override
   public void teleopPeriodic(){
   
-      //flicker/?
-     if (Operater.getXButton()){
-      leftServo.set(0);
-      rightServo.set(1);
-     } else if (Operater.getBButton()){
-      leftServo.set(1);
-      rightServo.set(0);
-     }
+      
 
-     
+      //elevator subsystem
+      // // Set the motor speed based on trigger values
+       if (Operater.getPOV() == 0) {
+           // Move motor forward
+           LiftMotor.set(-.9); // Scale speed down to 50%
+       } else if (Operater.getPOV() == 180) {
+           // Move motor backward
+           LiftMotor.set(.97); // Scale speed down to 50%
+       } else  {
+           // Stop motor
+           LiftMotor.set(0);
+      }
 
-      // Wrist motor control
 
-    // Set the motor speed based on trigger values
-    if (Operater.getAButtonPressed()){
-      cageMotor.set(-.37); 
-    } else if (Operater.getRightTriggerAxis() > 0.1) {
-        // Move motor forward
-        cageMotor.set(-.35); // Scale speed down to 50%
-    } else if (Operater.getLeftTriggerAxis() > 0.1) {
-        // Move motor backward
-        cageMotor.set(.8); // Scale speed down to 50%
-    } else if (Operater.getLeftTriggerAxis() < 0.1  && Operater.getRightTriggerAxis() < 0.1){
-        // Stop motor
-        cageMotor.set(0);
-    }
+      // Motors that push the coral to the reef
+
+       // Control the motors based on bumper inputs
+       if (Driver.getAButtonPressed()) {
+      //      // Spin motors forward
+           CoralMotorL.set(.5); // 80% speed forward
+           CoralMotorR.set(-.5); // 80% speed forward
+
+        } else if (Driver.getBButtonPressed()) {
+           // Spin motors backward
+           CoralMotorL.set(-.5); // 80% speed forward
+           CoralMotorR.set(.5); // 80% speed forward
+        } else if (Driver.getBButtonReleased() || Driver.getAButtonReleased()) {
+           // Stop motors
+         CoralMotorL.set(0);
+         CoralMotorR.set(0);
+
+       }
+       
+       if (Driver.getXButtonPressed()) {
+        //      // Spin motors forward
+             CSource.set(-.8); // 80% speed forward
+          }  else if ( Driver.getYButtonReleased() || Driver.getXButtonReleased()) { 
+             // Stop motors
+             CSource.set(0);
+          }
+          
+        }
+
+        
 
     //on and off for hang cylinder
 
-    if(Driver.getPOV() == 0)
-    { Endsolenoid.set(Value.kForward);
-    } else if (Driver.getPOV() == 180) 
-    { Endsolenoid.set(Value.kReverse);
-    }
+
+
+    //if(Operater.getRightBumperButtonPressed()){
+
+      //End = !End;
+  //}  
+  //if (End){
     
-    if(Operater.getYButtonPressed())
-    { clawsolenoid.set(Value.kForward);
-    } else if (Operater.getYButtonReleased())
-    { clawsolenoid.set(Value.kReverse);
-    }
-
-    if(Operater.getPOV() == 0)
-    { Armsolenoid.set(Value.kForward);
-    } else if (Operater.getPOV() == 180)
-    {Armsolenoid.set(Value.kReverse);
-    }
-  }
-
+    //Endsolenoid.set(Value.kForward);
+   
+//} else {
+    //Endsolenoid.set(Value.kReverse);
+//}
+    
   
+    
+    //if(Operater.getYButtonPressed()){
+
+      //BallOut = !BallOut;
+  //}  
+  //if (BallOut){
+    
+    //clawsolenoid.set(Value.kForward);
+   
+//} else {
+    //clawsolenoid.set(Value.kReverse);
+//}
+
+    
+
+  //if(Operater.getXButtonPressed()){
+
+      //Processor = !Processor;
+  //}  
+  //if (Processor){
+    
+    //Ballsolenoid.set(Value.kForward);
+   
+//} else {
+    //Ballsolenoid.set(Value.kReverse);
+//}
+
+//if(Operater.getBButtonPressed()){
+
+  //ground = !ground;
+//}  
+//if (ground){
+
+//Armsolenoid.set(Value.kForward);
+
+//} else {
+//Armsolenoid.set(Value.kReverse);
+//}
+
+
+
+
+   
 
   @Override
-  public void testInit()
-  {
+  public void testInit() {
     // Cancels all running commands at the start of test mode.
     CommandScheduler.getInstance().cancelAll();
   }
 
-  /**
-   * This function is called periodically during test mode.
-   */
+  /** This function is called periodically during test mode. */
   @Override
-  public void testPeriodic()
-  {
-  }
+  public void testPeriodic() {}
 
-  /**
-   * This function is called once when the robot is first started up.
-   */
+  /** This function is called once when the robot is first started up. */
   @Override
-  public void simulationInit()
-  {
-  }
+  public void simulationInit() {}
 
-  /**
-   * This function is called periodically whilst in simulation.
-   */
+  /** This function is called periodically whilst in simulation. */
   @Override
-  public void simulationPeriodic()
-  {
-  }
-  }
+  public void simulationPeriodic() {}
+}
