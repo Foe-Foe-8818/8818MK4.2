@@ -26,6 +26,9 @@ import frc.robot.subsystems.swervedrive.SwerveSubsystem;
 import java.io.File;
 import swervelib.SwerveInputStream;
 
+import frc.robot.commands.AutonomousCommand;
+import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
+
 
 
 
@@ -36,7 +39,8 @@ import swervelib.SwerveInputStream;
  */
 public class RobotContainer
 {
-   private SendableChooser<String> autoChooser;
+    private final WPI_TalonSRX LiftMotor = new WPI_TalonSRX(1); // Change the ID to match your setup
+    private SendableChooser<String> autoChooser;
      // The robot's subsystems and commands are defined here...
 
 

@@ -7,7 +7,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 
 import edu.wpi.first.wpilibj.Servo;
-// import edu.wpi.first.cameraserver.CameraServer;
+import edu.wpi.first.cameraserver.CameraServer;
 
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
@@ -15,6 +15,8 @@ import com.revrobotics.spark.SparkMax;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
+
+import com.ctre.phoenix6.hardware.TalonFX;
 
 
 import edu.wpi.first.wpilibj.XboxController;
@@ -35,10 +37,15 @@ private Timer disabledTimer;
 private XboxController Driver;
 private XboxController Operater;
 
+private TalonFX BallMotorI;
+
+
+
 //Motors that outtake the Coral//
 private SparkMax CoralMotorL;
 private SparkMax CoralMotorR;
 
+private SparkMax BallMotorP;
 
 //Human source Intake//
 private SparkMax CSource;
@@ -72,9 +79,11 @@ public Robot()
     CoralMotorL = new SparkMax(Constants.OperatorConstants.CoralMotorL, MotorType.kBrushless);
     CoralMotorR = new SparkMax(Constants.OperatorConstants.CoralMotorR, MotorType.kBrushless);
     //BallMotorI= new SparkMax(Constants.OperatorConstants.BallMotorI, MotorType.kBrushless);
-    //BallMotorP= new SparkMax(Constants.OperatorConstants.BallMotorP, MotorType.kBrushless);
+    BallMotorP = new SparkMax(Constants.OperatorConstants.BallMotorP, MotorType.kBrushless);
     CSource= new SparkMax(Constants.OperatorConstants.CSource, MotorType.kBrushless);
     LiftMotor= new SparkMax(Constants.OperatorConstants.LiftMotor, MotorType.kBrushed);
+    BallMotorI = new TalonFX(Constants.OperatorConstants.BallMotorI);
+
 
   }
 
@@ -89,7 +98,7 @@ public Robot()
   @Override
   public void robotInit()
   {
-    // CameraServer.startAutomaticCapture();
+    CameraServer.startAutomaticCapture();
     // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
     // autonomous chooser on the dashboard.
     m_robotContainer = new RobotContainer();
@@ -196,10 +205,10 @@ public Robot()
       // // Set the motor speed based on trigger values
        if (Operater.getPOV() == 0) {
            // Move motor forward
-           LiftMotor.set(-.9); // Scale speed down to 50%
+           LiftMotor.set(-.95); // Scale speed down to 50%
        } else if (Operater.getPOV() == 180) {
            // Move motor backward
-           LiftMotor.set(.97); // Scale speed down to 50%
+           LiftMotor.set(.98); // Scale speed down to 50%
        } else  {
            // Stop motor
            LiftMotor.set(0);
@@ -209,30 +218,52 @@ public Robot()
       // Motors that push the coral to the reef
 
        // Control the motors based on bumper inputs
-       if (Driver.getAButtonPressed()) {
+       if (Operater.getAButtonPressed()) {
       //      // Spin motors forward
            CoralMotorL.set(.5); // 80% speed forward
            CoralMotorR.set(-.5); // 80% speed forward
 
-        } else if (Driver.getBButtonPressed()) {
+        } else if (Operater.getBButtonPressed()) {
            // Spin motors backward
            CoralMotorL.set(-.5); // 80% speed forward
            CoralMotorR.set(.5); // 80% speed forward
-        } else if (Driver.getBButtonReleased() || Driver.getAButtonReleased()) {
+        } else if (Operater.getBButtonReleased() || Operater.getAButtonReleased()) {
            // Stop motors
          CoralMotorL.set(0);
          CoralMotorR.set(0);
 
-       }
+            if (Operater.getRightBumperButtonPressed()) {
+            //      // Spin motors forward
+              BallMotorP.set(.5); // 80% speed forward
+    
+            } else if (Operater.getLeftBumperButtonPressed()) {
+               // Spin motors backward
+               BallMotorP.set(-.5); // 80% speed forward
+            } else if (Operater.getRightBumperButtonReleased() || Operater.getLeftBumperButtonReleased()) {
+               // Stop motors
+               BallMotorP.set(0);
+            }
        
-       if (Driver.getXButtonPressed()) {
+            if (Operater.getRightTriggerAxis() > 0.1 ) {
+              //      // Spin motors forward
+                  BallMotorI.set(.5); // 80% speed forward
+            } else if (Operater.getLeftTriggerAxis() > .1) {
+                   // Spin motors backward
+                   BallMotorI.set(-.5); // 80% speed forward
+            } else if (Operater.getRightTriggerAxis() < .1 || Operater.getLeftTriggerAxis() < 0.1) {
+                   // Stop motors
+                   BallMotorI.set(0);
+            }
+
+
+       if (Operater.getXButtonPressed()) {
         //      // Spin motors forward
              CSource.set(-.8); // 80% speed forward
-          }  else if ( Driver.getYButtonReleased() || Driver.getXButtonReleased()) { 
+          }  else if ( Operater.getYButtonReleased() || Operater.getXButtonReleased()) { 
              // Stop motors
              CSource.set(0);
           }
-          
+        }
         }
 
         
