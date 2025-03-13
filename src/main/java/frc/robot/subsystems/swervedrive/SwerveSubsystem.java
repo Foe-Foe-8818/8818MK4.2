@@ -252,10 +252,16 @@ public class SwerveSubsystem extends SubsystemBase
    * @param pathName PathPlanner path name.
    * @return {@link AutoBuilder#followPath(PathPlannerPath)} path command.
    */
+
+  private void registerCommands() {
+    NamedCommands.registerCommand("L4elevator", new L4elevator(liftMotor, 0.4, 6000))
+  }
+
   public Command getAutonomousCommand(String pathName)
   {
     // Create a path following command using AutoBuilder. This will also trigger event markers.
     return new PathPlannerAuto(pathName);
+    
   }
 
   /**

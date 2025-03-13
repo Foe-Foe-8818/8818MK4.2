@@ -5,7 +5,6 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-
 import edu.wpi.first.wpilibj.Servo;
 import edu.wpi.first.cameraserver.CameraServer;
 
@@ -53,10 +52,10 @@ private SparkMax CSource;
 //Lift the Motor//
 private SparkMax LiftMotor;
 
-private final DoubleSolenoid Endsolenoid = new DoubleSolenoid(PneumaticsModuleType.REVPH, 7, 8);
-private final DoubleSolenoid clawsolenoid = new DoubleSolenoid(PneumaticsModuleType.REVPH, 6,9);
-private final DoubleSolenoid Ballsolenoid = new DoubleSolenoid(PneumaticsModuleType.REVPH, 5, 10);
-private final DoubleSolenoid Armsolenoid = new DoubleSolenoid(PneumaticsModuleType.REVPH, 11, 4);
+private final DoubleSolenoid Endsolenoid = new DoubleSolenoid(PneumaticsModuleType.CTREPCM, 7, 6);
+//private final DoubleSolenoid clawsolenoid = new DoubleSolenoid(PneumaticsModuleType.REVPH, 8,9);
+//private final DoubleSolenoid Ballsolenoid = new DoubleSolenoid(PneumaticsModuleType.REVPH, 5, 10);
+//private final DoubleSolenoid Armsolenoid = new DoubleSolenoid(PneumaticsModuleType.REVPH, 11, 4);
 
 private boolean BallOut = false;
 private boolean Processor = false;
@@ -107,7 +106,7 @@ public Robot()
     // immediately when disabled, but then also let it be pushed more 
     disabledTimer = new Timer();
     Endsolenoid.set(Value.kReverse);
-    Armsolenoid.set(Value.kReverse);
+   // Armsolenoid.set(Value.kReverse);
     if (isSimulation())
     {
       DriverStation.silenceJoystickConnectionWarning(true);
