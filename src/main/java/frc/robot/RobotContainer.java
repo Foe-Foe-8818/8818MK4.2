@@ -123,6 +123,7 @@ public class RobotContainer
     autoChooser.addOption("Solo", "Solo");
     autoChooser.addOption("Red 1", "Red 1");
     autoChooser.addOption("Red push", "Red push");
+   //// autoChooser.addOption("Red,Central,Right", "Red,Central,Right");
     SmartDashboard.putData(autoChooser);
   }
 
